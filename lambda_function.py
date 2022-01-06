@@ -13,7 +13,9 @@ logger.setLevel(logging.INFO)
 
 
 def connect(region: str, service: str='rds'):
-
+    """
+    Create client session to connect to aws service, we are only using RDS
+    """
     try:
         session = boto3.Session(region_name=region)
     except Exception as err:
@@ -28,7 +30,9 @@ def connect(region: str, service: str='rds'):
 
 
 def check_if_snap_exists(snap_name: str, region: str=TARGET_REGION) -> bool:
-
+    """
+    This prevents the replicator to copy the snapshot if is already in the target region
+    """
     client = connect(region)
     
     try:
@@ -38,7 +42,9 @@ def check_if_snap_exists(snap_name: str, region: str=TARGET_REGION) -> bool:
         return False
 
 def get_newest_snapshot(db_name: str, region: str=SOURCE_REGION) -> str:
-    
+    """
+    Get the latest available snapshot of the given database
+    """
     client = connect(region)
 
     response = client.describe_db_snapshots(
@@ -48,7 +54,9 @@ def get_newest_snapshot(db_name: str, region: str=SOURCE_REGION) -> str:
     return response['DBSnapshots'][-1]
 
 def replicate(region: str = TARGET_REGION):
-
+    """
+    Copy the latest snapshot available in the target region
+    """
     snap = get_newest_snapshot(os.environ['DB'])
     if not check_if_snap_exists(snap['DBSnapshotIdentifier']):
         client = connect(region)
@@ -66,7 +74,9 @@ def replicate(region: str = TARGET_REGION):
 
 
 def lambda_handler(event, context):
-    
+    """
+    Main entrypoint
+    """
     try: 
         replicate()
     except Exception as error:
