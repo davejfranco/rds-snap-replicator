@@ -1,0 +1,28 @@
+name: replicator deploy
+
+on:
+  push: # Runs on every push to main branch
+    branches:
+      - main
+    tags:
+      - "*.*.*"
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: zip function
+        run: |
+          zip code.zip lambda_function.py
+      
+      - name: deploy lambda
+        uses: appleboy/lambda-action@master
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          function_name: ${{ env.FUNCTION_NAME }}
+          zip_file: code.zip
+          publish: true
