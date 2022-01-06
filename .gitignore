@@ -1,1 +1,8 @@
+# Distribution / packaging
 .env/
+eggs/
+.eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+deploy.zip
