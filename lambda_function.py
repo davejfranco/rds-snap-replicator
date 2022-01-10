@@ -46,12 +46,15 @@ def get_newest_snapshot(db_name: str, region: str=SOURCE_REGION) -> str:
     Get the latest available snapshot of the given database
     """
     client = connect(region)
-
-    response = client.describe_db_snapshots(
-        DBInstanceIdentifier=db_name,
-        SnapshotType='automated'
-    )
-    return response['DBSnapshots'][-1]
+    try:
+        response = client.describe_db_snapshots(
+            DBInstanceIdentifier=db_name,
+            SnapshotType='automated'
+        )
+        return response['DBSnapshots'][-1]
+    except Exception as error:
+        logger.exception(error)
+        sys.exit(1)
 
 def replicate(region: str = TARGET_REGION):
     """
@@ -71,6 +74,7 @@ def replicate(region: str = TARGET_REGION):
             logger.info(f"Snapshot: {snap['DBSnapshotArn']} succesfully coppied to region: {TARGET_REGION}")
         except Exception as error:
             logger.exception(error)
+            sys.exit(1)
 
 
 def lambda_handler(event, context):
