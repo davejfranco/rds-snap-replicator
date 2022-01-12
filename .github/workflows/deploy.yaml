@@ -2,7 +2,7 @@ name: replicator deploy
 on:
   push: # Runs on every push to main branch
     branches:
-      - main
+      - develop
     tags:
       - "*.*.*"
 jobs:
