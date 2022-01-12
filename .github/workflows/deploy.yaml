@@ -1,5 +1,4 @@
 name: replicator deploy
-
 on:
   push: # Runs on every push to main branch
     branches:
@@ -23,6 +22,6 @@ jobs:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ${{ secrets.AWS_REGION }}
-          function_name: ${{ env.FUNCTION_NAME }}
+          function_name: ${{ secrets.FUNCTION_NAME }}
           zip_file: code.zip
           publish: true
